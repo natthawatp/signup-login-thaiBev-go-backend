@@ -47,12 +47,15 @@ func (s *AuthService) Login(email, password string) (string, error) {
 		return "", errors.New("user not found")
 	}
 
+	if user == nil {
+		return "", errors.New("user not found")
+	}
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) != nil {
 		return "", errors.New("invalid credentials")
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID.Hex(), 
+		"sub": user.ID.Hex(),
 		"exp": time.Now().Add(time.Hour * 72).Unix(),
 	})
 	return token.SignedString([]byte(s.Cfg.JWTSecret))
