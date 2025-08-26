@@ -4,4 +4,4 @@ version:
 	echo $(VERSION)
 
 run:
-	go run -ldflags "-X 'main.VERSION=$(VERSION)'" ./cmd
+	go run -ldflags "-X 'main.VERSION=$(VERSION)'" .
