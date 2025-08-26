@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -14,7 +17,9 @@ import (
 
 func main() {
 	cfg := config.LoadConfig()
+
 	db.ConnectMongo(cfg)
+	fmt.Println("✅ MongoDB connected")
 
 	userRepo := repository.NewUserRepository(db.Database)
 	authService := services.NewAuthService(userRepo, cfg)
@@ -30,6 +35,14 @@ func main() {
 	auth.Post("/login", authHandler.Login)
 	auth.Get("/me", authHandler.GetUser)
 
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("natthawat")
+	})
+
 	port := cfg.Port
-	app.Listen(":" + port)
+	if port == "" {
+		port = "8080"
+	}
+	log.Println("Server running on port", port)
+	log.Fatal(app.Listen(":" + port))
 }
